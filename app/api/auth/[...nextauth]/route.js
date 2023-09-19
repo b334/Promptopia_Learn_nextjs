@@ -20,7 +20,7 @@ const handler = NextAuth({
     },
     async signIn({ profile }) {
       try {
-        // serverless route -> means it is Lambda function that opens up only when it is called. it spins up server functions and make connection to database. We do not need to keep connected to server. -> dynamodb
+        // serverless route -> means it is Lambda function that opens up only when it is called and dies after it finishes its task. it spins up server functions and make connection to database. We do not need to keep connected to server. -> dynamodb
         await connectToDB();
 
         // check if a user already exists
