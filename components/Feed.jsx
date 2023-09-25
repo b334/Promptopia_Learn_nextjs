@@ -26,10 +26,6 @@ function Feed() {
     fetchPosts();
   }, []);
 
-  const handleSearchInput = (e) => {
-    setSearchText(e.target.value);
-  };
-
   useEffect(() => {
     const search = setTimeout(() => {
       const regexSearchText = new RegExp(searchText, "i");
@@ -48,6 +44,9 @@ function Feed() {
     return () => clearTimeout(search);
   }, [searchText]);
 
+  const handleSearchInput = (e) => setSearchText(e.target.value);
+  const tagClickHandler = (tag) => setSearchText(tag);
+
   return (
     <section className="feed">
       <form className="relative w-full flex-center">
@@ -62,9 +61,9 @@ function Feed() {
       </form>
 
       {searchText.length && filteredPost.length ? (
-        <PromptCardList data={filteredPost} handleTagClick={() => {}} />
+        <PromptCardList data={filteredPost} handleTagClick={tagClickHandler} />
       ) : (
-        <PromptCardList data={posts} handleTagClick={() => {}} />
+        <PromptCardList data={posts} handleTagClick={tagClickHandler} />
       )}
     </section>
   );
