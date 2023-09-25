@@ -13,11 +13,9 @@ const PromptCardList = ({ data, handleTagClick }) => {
 };
 
 function Feed() {
-  const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
-  const handleSearchChange = (e) => {
-    e.preventDefault();
-  };
+  const [searchText, setSearchText] = useState("");
+  const [filteredPost, setFilteredPost] = useState([]);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -28,19 +26,46 @@ function Feed() {
     fetchPosts();
   }, []);
 
+  const handleSearchInput = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  useEffect(() => {
+    const search = setTimeout(() => {
+      const regexSearchText = new RegExp(searchText, "i");
+
+      if (searchText !== "" && searchText.length > 0) {
+        const searchedTextContainingPosts = posts.filter(
+          (post) =>
+            regexSearchText.test(post.prompt) ||
+            regexSearchText.test(post.tag) ||
+            regexSearchText.test(post.creator.username) ||
+            regexSearchText.test(post.creator.email)
+        );
+        setFilteredPost(searchedTextContainingPosts);
+      }
+    }, 300);
+    return () => clearTimeout(search);
+  }, [searchText]);
+
   return (
     <section className="feed">
       <form className="relative w-full flex-center">
         <input
           type="text"
-          placeholder="Search for a tag or a username"
+          placeholder="Search text, tag, username, email"
           value={searchText}
-          onChange={handleSearchChange}
+          onChange={handleSearchInput}
           required
           className="search_input peer"
         />
       </form>
-      <PromptCardList data={posts} handleTagClick={() => {}} />
+
+      {searchText.length && filteredPost.length ? (
+        <PromptCardList data={filteredPost} handleTagClick={() => {}} />
+      ) : (
+        <PromptCardList data={posts} handleTagClick={() => {}} />
+      )}
     </section>
   );
 }
